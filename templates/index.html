@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Disease Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <h1>Heart Disease Prediction</h1>
+    <div class="container">
+        <form id="predictionForm" action="/predict" method="post">
+            <label for="age">Age</label>
+            <input type="number" id="age" name="age" required><br><br>
+
+            <label for="sex">Sex</label>
+            <select id="sex" name="sex" required>
+                <option value="">Select ..</option>
+                <option value="1">Male</option>
+                <option value="0">Female</option>
+            </select><br><br>
+
+            <label for="cp">Chest Pain</label>
+            <select id="cp" name="cp" required>
+                <option value="">Select ..</option>
+                <option value="0">Typical Angina</option>
+                <option value="1">Atypical Angina</option>
+                <option value="2">Non-Anginal Pain</option>
+                <option value="3">Asymptomatic</option>
+            </select><br><br>
+
+            <label for="trtbps">Resting Blood Pressure (mm Hg)</label>
+            <input type="number" id="trtbps" name="trtbps" required><br><br>
+
+            <label for="chol">Cholestoral (mg/dl)</label>
+            <input type="number" id="chol" name="chol" required><br><br>
+
+            <label for="fbs">Fasting Blood Sugar > 120 mg/dl</label>
+            <select id="fbs" name="fbs" required>
+                <option value="">Select ..</option>
+                <option value="1">Higher than 120 mg/dl</option>
+                <option value="0">Lower than 120 mg/dl</option>
+            </select><br><br>
+
+            <label for="restecg">Resting Electrocardiographic Results</label>
+            <select id="restecg" name="restecg" required>
+                <option value="">Select ..</option>
+                <option value="0">Normal</option>
+                <option value="1">Having ST-T wave abnormality (T wave inversions and/or ST elevation or depression of > 0.05 mV)</option>
+                <option value="2">Showing probable or definite left ventricular hypertrophy by Estes' criteria</option>
+            </select><br><br>
+
+            <label for="thalachh">Maximum Heart Rate Achieved</label>
+            <input type="number" id="thalachh" name="thalachh" required><br><br>
+
+            <label for="exng">Exercise Induced Angina</label>
+            <select id="exng" name="exng" required>
+                <option value="">Select ..</option>
+                <option value="1">Pain</option>
+                <option value="0">No Pain</option>
+            </select><br><br>
+
+            <label for="oldpeak">ST Depression induced by exercise relative to rest</label>
+            <input type="number" id="oldpeak" name="oldpeak" required><br><br>
+
+
+            <label for="slp">Slope of the Peak Exercise ST segment</label>
+            <select id="slp" name="slp" required>
+                <option value="">Select ..</option>
+                <option value="0">1</option>
+                <option value="1">2</option>
+                <option value="2">3</option>
+            </select><br><br>
+
+            <label for="caa">Number of major vessels colored by Fluoroscopy</label>
+            <select id="caa" name="caa" required>
+                <option value="">Select ..</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+
+            </select><br><br>
+
+            <label for="thall">Duration of the Exercise Test</label>
+            <select name="thall" id="thall" required>
+                <option value="0">Normal</option>
+                <option value="1">Fixed Defect</option>
+                <option value="2">Reversible Defect</option>
+            </select><br><br>
+            <input type="submit" value="Predict">
+        </form>
+
+        <dialog id="resultDialog">
+            <h2>Prediction Result</h2>
+            <p id="predictionResult"></p>
+            <div class="button-container">
+                <button id="closeDialog">Close</button>
+            </div>
+            
+        </dialog>
+    </div>
+
+</body>
+<script>
+    const form = document.getElementById('predictionForm');
+    const resultDialog = document.getElementById('resultDialog');
+    const predictionResult = document.getElementById('predictionResult');
+    const closeDialogBtn = document.getElementById('closeDialog');
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+        const response = await fetch('/predict', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            predictionResult.textContent = result.result;
+            resultDialog.showModal();
+        } else {
+            alert('Failed to get prediction result.');
+        }
+    });
+
+    closeDialogBtn.addEventListener('click', () => {
+        resultDialog.close();
+    });
+</script>
+</html>
+
